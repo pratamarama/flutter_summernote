@@ -271,9 +271,12 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
   }
 
   registerOnChangedListener() {
-    final script =
-        "\$('#summernote').summernote({ callbacks: { onChange: function(contents, \$editable) { console.log('onChange:', contents, \$editable); OnChangedSummernote.postMessage(contents); } } });";
-    _controller!.evaluateJavascript("setTimeout(function(){$script}, 0);");
+    // final script =
+    //     "\$('#summernote').summernote({ callbacks: { onChange: function(contents, \$editable) { console.log('onChange:', contents, \$editable); setTimeout(function() {OnChangedSummernote.postMessage(contents);},0); } } });";
+    // _controller!.evaluateJavascript("setTimeout(function(){$script}, 0);");
+    final script2 =
+        "\$('#summernote').on('summernote.keyup', function(we, e) { OnChangedSummernote.postMessage('ok'); });";
+    _controller!.evaluateJavascript("setTimeout(function(){$script2}, 0);");
   }
 
   setHint(String? text) {
