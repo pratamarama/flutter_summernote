@@ -29,7 +29,7 @@ class FlutterSummernote extends StatefulWidget {
   final String? customPopover;
   final bool hasAttachment;
   final bool showBottomToolbar;
-  final Function() onChange;
+  final Function(String)? onChanged;
   final Function(String)? returnContent;
 
   FlutterSummernote(
@@ -43,7 +43,7 @@ class FlutterSummernote extends StatefulWidget {
       this.customPopover,
       this.hasAttachment: false,
       this.showBottomToolbar: true,
-      required this.onChange,
+      this.onChanged,
       this.returnContent})
       : super(key: key);
 
@@ -115,7 +115,8 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
                     () => VerticalDragGestureRecognizer()..onUpdate = (_) {}),
               ].toSet(),
               javascriptChannels: <JavascriptChannel>[
-                getTextJavascriptChannel(context)
+                getTextJavascriptChannel(context),
+                onChangedJavascriptChannel(context)
               ].toSet(),
               onPageFinished: (String url) {
                 if (widget.hint != null) {
@@ -128,6 +129,7 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
                 if (widget.value != null) {
                   setText(widget.value!);
                 }
+                registerOnChangedListener();
               },
             ),
           ),
@@ -218,6 +220,20 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
         });
   }
 
+  JavascriptChannel onChangedJavascriptChannel(BuildContext context) {
+    return JavascriptChannel(
+        name: 'OnChangedSummernote',
+        onMessageReceived: (JavascriptMessage message) {
+          String isi = message.message;
+
+          setState(() {});
+
+          if (widget.onChanged != null) {
+            widget.onChanged!(isi);
+          }
+        });
+  }
+
   Future<String> getText() async {
     await _controller?.evaluateJavascript(
         "setTimeout(function(){GetTextSummernote.postMessage(document.getElementsByClassName('note-editable')[0].innerHTML)}, 0);");
@@ -254,10 +270,10 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
     _controller!.evaluateJavascript("\$('#summernote').summernote('reset');");
   }
 
-  // registerOnChangeListener() {
-  //   _controller!.evaluateJavascript(
-  //       "\$('#summernote').on('summernote.change', function(we, contents, \$editable) {${widget.onChange()}});");
-  // }
+  registerOnChangedListener() {
+    _controller!.evaluateJavascript(
+        "\$('#summernote').on('summernote.change', function(we, contents, \$editable) { console.log('summernote\'s content is changed.'); OnChangedSummernote.postMessage(contents); });");
+  }
 
   setHint(String? text) {
     String hint = '\$(".note-placeholder").html("$text");';
@@ -302,8 +318,6 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
     } else {
       popover = customPopover;
     }
-    String onChangeListener =
-        "\$('#summernote').on('summernote.change', function(we, contents, \$editable) {${widget.onChange()}});";
 
     return '''
     <!DOCTYPE html>
@@ -330,7 +344,6 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
         toolbar: $toolbar,
         popover: {$popover}
       });
-      $onChangeListener
     </script>
     </body>
     </html>

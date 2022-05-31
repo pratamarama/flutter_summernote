@@ -53,18 +53,16 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       backgroundColor: Colors.white,
       body: FlutterSummernote(
-        hint: "Your text here...",
-        key: _keyEditor,
-        hasAttachment: true,
-        customToolbar: """
+          hint: "Your text here...",
+          key: _keyEditor,
+          hasAttachment: true,
+          customToolbar: """
           [
             ['style', ['bold', 'italic', 'underline', 'clear']],
             ['font', ['strikethrough', 'superscript', 'subscript']],
             ['insert', ['link', 'table', 'hr']]
           ]
-        """,
-        onChange: () {},
-      ),
+        """),
     );
   }
 }
