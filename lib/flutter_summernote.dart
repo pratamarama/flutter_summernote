@@ -225,7 +225,7 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
         name: 'OnChangedSummernote',
         onMessageReceived: (JavascriptMessage message) {
           String isi = message.message;
-
+          print("onChanged $message");
           setState(() {});
 
           if (widget.onChanged != null) {
@@ -278,7 +278,7 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
   callbacks: {
     onChange: function(contents, \$editable) {
       console.log('onChange:', contents, \$editable);
-      OnChangedSummernote.postMessage(contents);
+      
     }
   }
 });
