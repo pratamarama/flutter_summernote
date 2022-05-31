@@ -63,6 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ['insert', ['link', 'table', 'hr']]
           ]
         """,
+        onChange: () {},
       ),
     );
   }

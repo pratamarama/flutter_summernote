@@ -29,6 +29,7 @@ class FlutterSummernote extends StatefulWidget {
   final String? customPopover;
   final bool hasAttachment;
   final bool showBottomToolbar;
+  final Function() onChange;
   final Function(String)? returnContent;
 
   FlutterSummernote(
@@ -42,6 +43,7 @@ class FlutterSummernote extends StatefulWidget {
       this.customPopover,
       this.hasAttachment: false,
       this.showBottomToolbar: true,
+      required this.onChange,
       this.returnContent})
       : super(key: key);
 
@@ -252,6 +254,11 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
     _controller!.evaluateJavascript("\$('#summernote').summernote('reset');");
   }
 
+  // registerOnChangeListener() {
+  //   _controller!.evaluateJavascript(
+  //       "\$('#summernote').on('summernote.change', function(we, contents, \$editable) {${widget.onChange()}});");
+  // }
+
   setHint(String? text) {
     String hint = '\$(".note-placeholder").html("$text");';
     _controller!.evaluateJavascript("setTimeout(function(){$hint}, 0);");
@@ -295,6 +302,8 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
     } else {
       popover = customPopover;
     }
+    String onChangeListener =
+        "\$('#summernote').on('summernote.change', function(we, contents, \$editable) {${widget.onChange()}});";
 
     return '''
     <!DOCTYPE html>
@@ -321,6 +330,7 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
         toolbar: $toolbar,
         popover: {$popover}
       });
+      $onChangeListener
     </script>
     </body>
     </html>
