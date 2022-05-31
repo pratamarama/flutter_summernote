@@ -129,7 +129,6 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
                 if (widget.value != null) {
                   setText(widget.value!);
                 }
-                registerOnChangedListener();
               },
             ),
           ),
@@ -271,8 +270,10 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
   }
 
   registerOnChangedListener() {
-    _controller!.evaluateJavascript(
-        "\$('#summernote').on('summernote.change', function(we, contents, \$editable) { console.log('summernote\'s content is changed.'); OnChangedSummernote.postMessage(contents); });");
+    final script =
+        "\$('#summernote').on('summernote.change', function(we, contents, \$editable) { console.log('summernote\'s content is changed.'); OnChangedSummernote.postMessage(contents); });";
+    // _controller!.evaluateJavascript(script);
+    return script;
   }
 
   setHint(String? text) {
@@ -344,6 +345,7 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
         toolbar: $toolbar,
         popover: {$popover}
       });
+      ${registerOnChangedListener()}
     </script>
     </body>
     </html>
