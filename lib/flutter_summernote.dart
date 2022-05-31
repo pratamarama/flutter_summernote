@@ -225,7 +225,12 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
         name: 'OnChangedSummernote',
         onMessageReceived: (JavascriptMessage message) {
           String isi = message.message;
-          print("onChanged $message");
+          if (isi.isEmpty ||
+              isi == "<p></p>" ||
+              isi == "<p><br></p>" ||
+              isi == "<p><br/></p>") {
+            isi = "";
+          }
           setState(() {});
 
           if (widget.onChanged != null) {
@@ -271,11 +276,8 @@ class FlutterSummernoteState extends State<FlutterSummernote> {
   }
 
   registerOnChangedListener() {
-    // final script =
-    //     "\$('#summernote').summernote({ callbacks: { onChange: function(contents, \$editable) { console.log('onChange:', contents, \$editable); setTimeout(function() {OnChangedSummernote.postMessage(contents);},0); } } });";
-    // _controller!.evaluateJavascript("setTimeout(function(){$script}, 0);");
     final script2 =
-        "\$('#summernote').on('summernote.keyup', function(we, e) { OnChangedSummernote.postMessage('ok'); });";
+        "\$('#summernote').on('summernote.keyup', function(we, e) { OnChangedSummernote.postMessage(document.getElementsByClassName('note-editable')[0].innerHTML); });";
     _controller!.evaluateJavascript("setTimeout(function(){$script2}, 0);");
   }
 
